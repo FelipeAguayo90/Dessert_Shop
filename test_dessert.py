@@ -144,30 +144,3 @@ class TestSundae(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-
-
-# class TestCalculator(unittest.TestCase):
-
-#     def setUp(self):
-#         """Set up an instance of the class before each test."""
-#         self.calc = Calculator()
-
-#     def test_divide_valid_values(self):
-#         """Test that valid input returns the correct result."""
-#         result = self.calc.divide(10, 2)
-#         self.assertEqual(result, 5.0)  # 10 / 2 should return 5.0
-
-#     def test_divide_invalid_value(self):
-#         """Test that division by zero raises a ValueError."""
-#         with self.assertRaises(ValueError):
-#             self.calc.divide(10, 0)  # This should raise a ValueError
-
-#     def test_divide_negative_values(self):
-#         """Test that dividing by a negative value works as expected."""
-#         result = self.calc.divide(10, -2)
-#         self.assertEqual(result, -5.0)  # 10 / -2 should return -5.0
-
-#     def test_divide_floats(self):
-#         """Test that dividing two floating-point numbers works correctly."""
-#         result = self.calc.divide(7.5, 2.5)
-#         self.assertEqual(result, 3.0)  # 7.5 / 2.5 should return 3.0
