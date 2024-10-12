@@ -10,9 +10,11 @@ class DessertItem:
         try:
             if type(name) is not str:
                 raise TypeError("New name must be a string.")
-            self._name = name
+            else:
+                self._name = name
         except TypeError as e:
-            print(e)
+            message = f"{e}"
+            return message
 
     def get_name(self):
         try:
@@ -26,7 +28,8 @@ class DessertItem:
                 raise TypeError("New name must be a string.")
             self._name = new_name
         except TypeError as e:
-            print(e)
+            message = f"{e}"
+            return message
 
     name = property(get_name, set_name)
 
@@ -174,12 +177,3 @@ class Sundae(IceCream):
     topping_name = property(get_topping_name, set_topping_name)
 
     topping_price = property(get_topping_price, set_topping_price)
-
-
-candy_item = Candy(name="Chocolate", weight=2.5, price=3.0)
-candy_item2 = Candy("some", 2.5, 3.0)
-
-print(candy_item.name)
-candy_item2.candy_weight = 3
-candy_item2.name = "funny"
-print(candy_item2.name)
