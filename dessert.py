@@ -1,3 +1,6 @@
+from typing import List
+
+
 class DessertItem:
     """
     DessertItem class represents a dessert item in the dessert shop.
@@ -177,3 +180,29 @@ class Sundae(IceCream):
     topping_name = property(get_topping_name, set_topping_name)
 
     topping_price = property(get_topping_price, set_topping_price)
+
+
+class Order:
+    """
+    This class represents an order, stores information of items being added to the order
+    of type DessertItem.
+
+    Attributes:
+        _order (list[DessertItem])
+    """
+
+    def __init__(self):
+        self._oder: List[DessertItem] = []
+
+    def add(self, new_item: DessertItem):
+        self._oder.append(new_item)
+
+    def __len__(self):
+        return len(self._oder)
+
+    def __str__(self):
+        order = ""
+        for item in self._oder:
+            order += f"{item.name} \n"
+        order += f"Total number of items in order: {len(self)}"
+        return order
