@@ -1,13 +1,16 @@
 from typing import List
+from abc import ABC, abstractmethod
 
 
-class DessertItem:
+class DessertItem(ABC):
     """
     DessertItem class represents a dessert item in the dessert shop.
 
     Attributes:
         _name (str): The name of the candy.
     """
+
+    _tax_percent = 0.0725
 
     def __init__(self, name: str = ""):
         try:
@@ -33,6 +36,14 @@ class DessertItem:
         except TypeError as e:
             message = f"{e}"
             return message
+
+    @abstractmethod
+    def calculate_cost(self) -> float:
+        pass
+
+    def calculate_tax(self) -> float:
+        tax = self.calculate_cost(self) * DessertItem._tax_percent
+        return round(tax, 2)
 
     name = property(get_name, set_name)
 
@@ -65,6 +76,10 @@ class Candy(DessertItem):
 
     def set_price_per_pound(self, new_price):
         self._price_per_pound = new_price
+
+    def calculate_cost(self) -> float:
+        cost = self._candy_weight * self._price_per_pound
+        return round(cost, 2)
 
     candy_weight = property(get_candy_weight, set_candy_weight)
 
@@ -100,6 +115,11 @@ class Cookie(DessertItem):
     def set_price_per_dozen(self, new_price):
         self._price_per_dozen = new_price
 
+    def calculate_cost(self) -> float:
+        cost_per_cookie = 12 / self._price_per_dozen
+        cost = self._cookie_quantity * cost_per_cookie
+        return round(cost, 2)
+
     cookie_quantity = property(get_cookie_quantity, set_cookie_quantity)
 
     price_per_dozen = property(get_price_per_dozen, set_price_per_dozen)
@@ -133,6 +153,10 @@ class IceCream(DessertItem):
 
     def set_price_per_scoop(self, new_price):
         self._price_per_scoop = new_price
+
+    def calculate_cost(self) -> float:
+        cost = self._scoop_count * self._price_per_scoop
+        return round(cost, 2)
 
     scoop_count = property(get_scoop_count, set_scoop_count)
 
@@ -177,6 +201,10 @@ class Sundae(IceCream):
     def set_topping_price(self, new_price):
         self._topping_price = new_price
 
+    def calculate_cost(self) -> float:
+        cost = self._scoop_count * self._price_per_scoop + self._topping_price
+        return round(cost, 2)
+
     topping_name = property(get_topping_name, set_topping_name)
 
     topping_price = property(get_topping_price, set_topping_price)
@@ -196,6 +224,15 @@ class Order:
 
     def add(self, new_item: DessertItem):
         self._oder.append(new_item)
+
+    def order_cost(self):
+        order_cost = 0
+        for item in self._oder:
+            order_cost += item.calculate_cost()
+        return order_cost
+
+    def order_tax(self):
+        total_tax = self.order_cost() * DessertItem._tax_percent
 
     def __len__(self):
         return len(self._oder)
