@@ -4,14 +4,14 @@ import dessert as d
 
 class TestSundae(unittest.TestCase):
     def setUp(self):
-        self.i = d.Sundae("Cookies N Cream", 3, 1.50, "Hot Fudge", 1.15)
+        self.i = d.Sundae("Vanilla", 3, 0.69, "Hot Fudge", 1.29)
 
     def test_init(self):
-        self.assertEqual(self.i.name, "Cookies N Cream")
+        self.assertEqual(self.i.name, "Vanilla")
         self.assertEqual(self.i.scoop_count, 3)
-        self.assertEqual(self.i.price_per_scoop, 1.50)
+        self.assertEqual(self.i.price_per_scoop, 0.69)
         self.assertEqual(self.i.topping_name, "Hot Fudge")
-        self.assertEqual(self.i.topping_price, 1.15)
+        self.assertEqual(self.i.topping_price, 1.29)
 
     def test_set_name(self):
         self.i.name = "Chocolate Mint"
@@ -32,6 +32,12 @@ class TestSundae(unittest.TestCase):
     def test_set_topping_price(self):
         self.i.topping_price = 1.25
         self.assertEqual(self.i.topping_price, 1.25)
+
+    def test_calculate_cost(self):
+        self.assertEqual(self.i.calculate_cost(), 3.36)
+
+    def test_calculate_tax(self):
+        self.assertEqual(self.i.calculate_tax(), 0.24)
 
     def tearDown(self):
         return super().tearDown()
