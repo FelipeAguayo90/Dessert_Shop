@@ -42,7 +42,7 @@ class DessertItem(ABC):
         pass
 
     def calculate_tax(self) -> float:
-        tax = self.calculate_cost(self) * DessertItem._tax_percent
+        tax = self.calculate_cost() * DessertItem._tax_percent
         return round(tax, 2)
 
     name = property(get_name, set_name)
@@ -116,8 +116,8 @@ class Cookie(DessertItem):
         self._price_per_dozen = new_price
 
     def calculate_cost(self) -> float:
-        cost_per_cookie = 12 / self._price_per_dozen
-        cost = self._cookie_quantity * cost_per_cookie
+        cost_per_cookie = self._price_per_dozen / 12
+        cost = self._cookie_quantity * round(cost_per_cookie, 3)
         return round(cost, 2)
 
     cookie_quantity = property(get_cookie_quantity, set_cookie_quantity)
@@ -202,7 +202,7 @@ class Sundae(IceCream):
         self._topping_price = new_price
 
     def calculate_cost(self) -> float:
-        cost = self._scoop_count * self._price_per_scoop + self._topping_price
+        cost = round(self._scoop_count * self._price_per_scoop, 2) + self._topping_price
         return round(cost, 2)
 
     topping_name = property(get_topping_name, set_topping_name)
@@ -229,10 +229,11 @@ class Order:
         order_cost = 0
         for item in self._oder:
             order_cost += item.calculate_cost()
-        return order_cost
+        return round(order_cost, 2)
 
     def order_tax(self):
         total_tax = self.order_cost() * DessertItem._tax_percent
+        return round(total_tax, 2)
 
     def __len__(self):
         return len(self._oder)
