@@ -4,29 +4,34 @@ import dessert as d
 
 class TestDessertItem(unittest.TestCase):
     def setUp(self):
-        self.item = d
+        self.item = d.Candy("Candy Corn", 1.5, 0.25)
 
     def test_init(self):
-        item = self.item.DessertItem("Tres Leches")
-        self.assertEqual(item.name, "Tres Leches")
+        self.assertEqual(self.item.name, "Candy Corn")
 
     def test_init_invalid_value(self):
         with self.assertRaises(TypeError):
-            self.item.DessertItem(2)
+            self.item2 = d.DessertItem(2)
 
     def test_get_name(self):
-        item = self.item.DessertItem("Tres Leches")
-        self.assertEqual(item.name, "Tres Leches")
+        self.assertEqual(self.item.name, "Candy Corn")
 
     def test_set_name(self):
-        item = self.item.DessertItem("Tres Leches")
-        item.name = "Carrot Cake"
-        self.assertEqual(item.name, "Carrot Cake")
+        self.item.name = "Carrot Cake"
+        self.assertEqual(self.item.name, "Carrot Cake")
 
     def test_invalid_set_name(self):
-        item = self.item.DessertItem("Tres Leches")
-        item.name = 6
-        self.assertEqual(item.name, "Tres Leches")
+        self.item.name = 6
+        self.assertEqual(self.item.name, "Candy Corn")
+
+    def test_calculate_cost(self):
+        item = d.Candy("Candy Corn", 1.5, 0.25)
+        self.assertEqual(item.calculate_cost(), 0.38)
+
+    def test_tax(self):
+        self.assertEqual(self.item._tax_percent, 0.0725)
+        self.item.change_tax(0.0825)
+        self.assertEqual(self.item._tax_percent, 0.0825)
 
     def tearDown(self):
         return super().tearDown()

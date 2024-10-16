@@ -45,6 +45,10 @@ class DessertItem(ABC):
         tax = self.calculate_cost() * DessertItem._tax_percent
         return round(tax, 2)
 
+    @classmethod
+    def change_tax(cls, new_tax):
+        cls._tax_percent = new_tax
+
     name = property(get_name, set_name)
 
 
