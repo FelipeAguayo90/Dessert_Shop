@@ -10,8 +10,10 @@ class DessertShop:
         while True:
             try:
                 candy_name = input("Enter the type of candy: \n")
-                float(candy_name)
-                print("Please enter a valid type. ", end="")
+                if len(candy_name) > 0:
+                    float(candy_name)
+                else:
+                    print("Please enter a valid type. ", end="")
             except ValueError:
                 break
         while True:
@@ -35,8 +37,10 @@ class DessertShop:
         while True:
             try:
                 cookie_name = input("Enter the type of cookie: \n")
-                float(cookie_name)
-                print("Please enter a valid type. ", end="")
+                if len(cookie_name) > 0:
+                    float(cookie_name)
+                else:
+                    print("Please enter a valid type. ", end="")
             except ValueError:
                 break
         while True:
@@ -60,8 +64,10 @@ class DessertShop:
         while True:
             try:
                 ice_cream_name = input("Enter the type of ice cream: \n")
-                float(ice_cream_name)
-                print("Please enter a valid type. ", end="")
+                if len(ice_cream_name) > 0:
+                    float(ice_cream_name)
+                else:
+                    print("Please enter a valid type. ", end="")
             except ValueError:
                 break
         while True:
@@ -87,8 +93,10 @@ class DessertShop:
         while True:
             try:
                 ice_cream_name = input("Enter the type of ice cream: \n")
-                float(ice_cream_name)
-                print("Please enter a valid type. ", end="")
+                if len(ice_cream_name) > 0:
+                    float(ice_cream_name)
+                else:
+                    print("Please enter a valid type. ", end="")
             except ValueError:
                 break
         while True:
@@ -106,8 +114,10 @@ class DessertShop:
         while True:
             try:
                 topping_name = input("Enter the topping: \n")
-                float(topping_name)
-                print("Please enter a valid type. ", end="")
+                if len(topping_name) > 0:
+                    float(topping_name)
+                else:
+                    print("Please enter a valid type. ", end="")
             except ValueError:
                 break
         while True:
