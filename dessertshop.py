@@ -194,7 +194,7 @@ def main():
                 print(
                     "Invalid response:  Please enter a choice from the menu (1-4) or Enter"
                 )
-    print()
+    print(order)
 
     receipt_list = [["Name", "Item Cost", "Tax"]]
     subtotal_cost = 0
