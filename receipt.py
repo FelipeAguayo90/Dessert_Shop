@@ -5,7 +5,7 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import getSampleStyleSheet
 
 
-def make_receipt(DATA: list[list[str, int, float]], out_file_name: str = "receipt.pdf"):
+def make_receipt(DATA, out_file_name: str = "receipt.pdf"):
 
     # creating a Base Document Template of page size A4
     pdf = SimpleDocTemplate(out_file_name, pagesize=A4)
@@ -29,15 +29,15 @@ def make_receipt(DATA: list[list[str, int, float]], out_file_name: str = "receip
     # are nothing but rows and columns
     style = TableStyle(
         [
-            ("BOX", (0, 0), (-1, -1), 1, colors.black),
-            (
-                "GRID",
-                (0, len(DATA) - 3),
-                ((len(DATA) - 4), len(DATA) - 4),
-                1,
-                colors.black,
-            ),
-            ("BACKGROUND", (0, 0), (3, 0), colors.gray),
+            # (
+            #     "GRID",
+            #     (0, len(DATA) - 3),
+            #     ((len(DATA) - 4), len(DATA) - 4),
+            #     1,
+            #     colors.black,
+            # ),
+            ("LINEABOVE", (0, -3), (4, -3), 1, colors.black),
+            ("BACKGROUND", (0, 0), (4, 0), colors.gray),
             ("TEXTCOLOR", (0, 0), (-1, 0), colors.whitesmoke),
             ("ALIGN", (0, 0), (-1, -1), "CENTER"),
             ("BACKGROUND", (0, 1), (-1, -1), colors.beige),

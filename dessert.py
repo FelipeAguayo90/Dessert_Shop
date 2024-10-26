@@ -90,7 +90,7 @@ class Candy(DessertItem):
     price_per_pound = property(get_price_per_pound, set_price_per_pound)
 
     def __str__(self) -> str:
-        return f"{self.name}, {str(self.candy_weight)}lbs, ${str(self.price_per_pound)}/lbs, ${str(self.calculate_cost())}, {str(self.calculate_tax())}\n"
+        return f"{self.name}, {str(self.candy_weight)}lbs, ${self.price_per_pound:.2f}/lbs, ${self.calculate_cost():.2f}, {self.calculate_tax():.2f}"
 
 
 class Cookie(DessertItem):
@@ -132,7 +132,7 @@ class Cookie(DessertItem):
     price_per_dozen = property(get_price_per_dozen, set_price_per_dozen)
 
     def __str__(self) -> str:
-        return f"{self.name}, {str(self.cookie_quantity)}, ${str(self.price_per_dozen)}/dozen, ${str(self.calculate_cost())}, {str(self.calculate_tax())}\n"
+        return f"{self.name}, {str(self.cookie_quantity)}, ${str(self.price_per_dozen)}/dozen, ${self.calculate_cost():.2f}, {self.calculate_tax():.2f}"
 
 
 class IceCream(DessertItem):
@@ -173,7 +173,7 @@ class IceCream(DessertItem):
     price_per_scoop = property(get_price_per_scoop, set_price_per_scoop)
 
     def __str__(self) -> str:
-        return f"{self.name}, {str(self.scoop_count)}, ${str(self.price_per_scoop)}/scoop, ${str(self.calculate_cost())}, {str(self.calculate_tax())}\n"
+        return f"{self.name}, {self.scoop_count}, ${self.price_per_scoop}/scoop, ${self.calculate_cost():.2f}, {self.calculate_tax():.2f}"
 
 
 class Sundae(IceCream):
@@ -223,7 +223,7 @@ class Sundae(IceCream):
     topping_price = property(get_topping_price, set_topping_price)
 
     def __str__(self) -> str:
-        return f"{self.topping_name} {self.name} Sundae, {str(self.scoop_count)}, ${str(self.price_per_scoop)}/scoop, ${str(self.calculate_cost())}, {str(self.calculate_tax())}\n{self.topping_name}, 1, ${str(self.topping_price)}\n"
+        return f"{self.topping_name} {self.name} Sundae, {self.scoop_count}, ${self.price_per_scoop:.2f}/scoop, ${self.calculate_cost():.2f}, {self.calculate_tax():.2f}\n{self.topping_name}, 1, ${self.topping_price:.2f}"
 
 
 class Order:
@@ -257,6 +257,6 @@ class Order:
     def __str__(self):
         order = ""
         for item in self._oder:
-            order += item.__str__()
+            order += item.__str__() + "\n"
         order += f"Total number of items in order: {len(self)}"
         return order

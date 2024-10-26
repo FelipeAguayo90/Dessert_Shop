@@ -196,7 +196,8 @@ def main():
                 )
     print(order)
 
-    receipt_list = [["Name", "Item Cost", "Tax"]]
+    # receipt_list = [["Name", "Item Cost", "Tax"]]
+    receipt_list = [["Name", "Quantity", "Unit Price", "Cost", "Tax"]]
     subtotal_cost = 0
     subtotal_tax = 0
 
@@ -205,7 +206,15 @@ def main():
         tax = item.calculate_tax()
         subtotal_cost += cost
         subtotal_tax += tax
-        receipt_list.append(list((item.name, f"${cost:.2f}", f"${tax:.2f}")))
+        parts = item.__str__().split("\n")
+        list1_str = parts[0]
+        list2_str = parts[1] if len(parts) > 1 else False
+        list1 = [text.strip() for text in list1_str.split(",")]
+        list2 = [text.strip() for text in list2_str.split(",")] if list2_str else []
+        receipt_list.append(list1)
+        if len(list2) > 0:
+            receipt_list.append(list2)
+
     receipt_list.append(
         list(
             (
@@ -216,11 +225,12 @@ def main():
         )
     )
     receipt_list.append(
-        list(("Order Total", "", f"${order.order_cost() + order.order_tax()}"))
+        list(("Order Total", "", f"${(order.order_cost() + order.order_tax()):.2f}"))
     )
     receipt_list.append(list(("Total items in the order", "", len(order))))
 
     make_receipt(receipt_list)
+    print()
 
 
 if __name__ == "__main__":
