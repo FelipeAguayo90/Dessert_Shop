@@ -29,6 +29,9 @@ class TestCookie(unittest.TestCase):
     def test_calculate_tax(self):
         self.assertEqual(self.c.calculate_tax(), 0.14)
 
+    def test_packaging(self):
+        self.assertEqual(self.c._packaging, "Box")
+
     def tearDown(self):
         return super().tearDown()
 

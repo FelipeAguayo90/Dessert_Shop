@@ -29,6 +29,9 @@ class TestIceCream(unittest.TestCase):
     def test_calculate_tax(self):
         self.assertEqual(self.i.calculate_tax(), 0.11)
 
+    def test_packaging(self):
+        self.assertEqual(self.i._packaging, "Bowl")
+
     def tearDown(self):
         return super().tearDown()
 

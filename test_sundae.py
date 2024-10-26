@@ -39,6 +39,9 @@ class TestSundae(unittest.TestCase):
     def test_calculate_tax(self):
         self.assertEqual(self.i.calculate_tax(), 0.24)
 
+    def test_packaging(self):
+        self.assertEqual(self.i._packaging, "Boat")
+
     def tearDown(self):
         return super().tearDown()
 

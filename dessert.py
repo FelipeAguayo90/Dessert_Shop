@@ -1,5 +1,6 @@
 from typing import List
 from abc import ABC, abstractmethod
+from packaging import Packaging
 
 
 class DessertItem(ABC):
@@ -18,6 +19,7 @@ class DessertItem(ABC):
                 raise TypeError("New name must be a string.")
             else:
                 self._name = name
+                self._packaging = None
         except TypeError as e:
             message = f"{e}"
             return message
@@ -68,6 +70,7 @@ class Candy(DessertItem):
         super().__init__(name)
         self._candy_weight = weight
         self._price_per_pound = price
+        self._packaging = "Bag"
 
     def get_candy_weight(self):
         return self._candy_weight
@@ -90,7 +93,7 @@ class Candy(DessertItem):
     price_per_pound = property(get_price_per_pound, set_price_per_pound)
 
     def __str__(self) -> str:
-        return f"{self.name}, {str(self.candy_weight)}lbs, ${self.price_per_pound:.2f}/lbs, ${self.calculate_cost():.2f}, {self.calculate_tax():.2f}"
+        return f"{self.name} ({self._packaging}), {str(self.candy_weight)}lbs, ${self.price_per_pound:.2f}/lbs, ${self.calculate_cost():.2f}, {self.calculate_tax():.2f}"
 
 
 class Cookie(DessertItem):
@@ -109,6 +112,7 @@ class Cookie(DessertItem):
         super().__init__(name)
         self._cookie_quantity = quantity
         self._price_per_dozen = price
+        self._packaging = "Box"
 
     def get_cookie_quantity(self):
         return self._cookie_quantity
@@ -132,7 +136,7 @@ class Cookie(DessertItem):
     price_per_dozen = property(get_price_per_dozen, set_price_per_dozen)
 
     def __str__(self) -> str:
-        return f"{self.name}, {str(self.cookie_quantity)}, ${str(self.price_per_dozen)}/dozen, ${self.calculate_cost():.2f}, {self.calculate_tax():.2f}"
+        return f"{self.name} ({self._packaging}), {str(self.cookie_quantity)}, ${str(self.price_per_dozen)}/dozen, ${self.calculate_cost():.2f}, {self.calculate_tax():.2f}"
 
 
 class IceCream(DessertItem):
@@ -151,6 +155,7 @@ class IceCream(DessertItem):
         super().__init__(name)
         self._scoop_count = scoops
         self._price_per_scoop = price
+        self._packaging = "Bowl"
 
     def get_scoop_count(self):
         return self._scoop_count
@@ -173,7 +178,7 @@ class IceCream(DessertItem):
     price_per_scoop = property(get_price_per_scoop, set_price_per_scoop)
 
     def __str__(self) -> str:
-        return f"{self.name}, {self.scoop_count}, ${self.price_per_scoop}/scoop, ${self.calculate_cost():.2f}, {self.calculate_tax():.2f}"
+        return f"{self.name} ({self._packaging}), {self.scoop_count}, ${self.price_per_scoop}/scoop, ${self.calculate_cost():.2f}, {self.calculate_tax():.2f}"
 
 
 class Sundae(IceCream):
@@ -201,6 +206,7 @@ class Sundae(IceCream):
         super().__init__(name, scoops, price)
         self._topping_name = topping_name
         self._topping_price = topping_price
+        self._packaging = "Boat"
 
     def get_topping_name(self):
         return self._topping_name
@@ -223,7 +229,7 @@ class Sundae(IceCream):
     topping_price = property(get_topping_price, set_topping_price)
 
     def __str__(self) -> str:
-        return f"{self.topping_name} {self.name} Sundae, {self.scoop_count}, ${self.price_per_scoop:.2f}/scoop, ${self.calculate_cost():.2f}, {self.calculate_tax():.2f}\n{self.topping_name}, 1, ${self.topping_price:.2f}"
+        return f"{self.topping_name} {self.name} Sundae ({self._packaging}), {self.scoop_count}, ${self.price_per_scoop:.2f}/scoop, ${self.calculate_cost():.2f}, {self.calculate_tax():.2f}\n{self.topping_name}, 1, ${self.topping_price:.2f}"
 
 
 class Order:

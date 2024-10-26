@@ -33,6 +33,9 @@ class TestDessertItem(unittest.TestCase):
         self.item.change_tax(0.0825)
         self.assertEqual(self.item._tax_percent, 0.0825)
 
+    def test_packaging(self):
+        self.assertEqual(self.item._packaging, "Bag")
+
     def tearDown(self):
         return super().tearDown()
 
