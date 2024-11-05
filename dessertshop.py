@@ -229,6 +229,7 @@ def main():
                 )
 
     shop.payment_type(order)
+    order.sort()
     print(order)
 
     receipt_list = [["Name", "Quantity", "Unit Price", "Cost", "Tax"]]

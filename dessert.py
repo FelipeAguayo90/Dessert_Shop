@@ -48,6 +48,24 @@ class DessertItem(ABC):
         tax = self.calculate_cost() * DessertItem._tax_percent
         return round(tax, 2)
 
+    def __eq__(self, value: object) -> bool:
+        return self.calculate_cost() == value.calculate_cost()
+
+    def __ne__(self, value: object) -> bool:
+        return self.calculate_cost() != value.calculate_cost()
+
+    def __lt__(self, value: object) -> bool:
+        return self.calculate_cost() < value.calculate_cost()
+
+    def __gt__(self, value: object) -> bool:
+        return self.calculate_cost() > value.calculate_cost()
+
+    def __ge__(self, value: object) -> bool:
+        return self.calculate_cost() >= value.calculate_cost()
+
+    def __le__(self, value: object) -> bool:
+        return self.calculate_cost() <= value.calculate_cost()
+
     @classmethod
     def change_tax(cls, new_tax):
         cls._tax_percent = new_tax
@@ -284,6 +302,9 @@ class Order:
             return True
         except ValueError as e:
             return (e, False)
+
+    def sort(self):
+        self._oder = sorted(self._oder)
 
     def __len__(self):
         return len(self._oder)

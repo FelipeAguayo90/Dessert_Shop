@@ -36,6 +36,28 @@ class TestDessertItem(unittest.TestCase):
     def test_packaging(self):
         self.assertEqual(self.item._packaging, "Bag")
 
+    def test_equal_to(self):
+        self.assertTrue(self.item == d.Candy("Candy", 1.5, 0.25))
+        self.assertFalse(self.item == d.Candy("Candy", 1.4, 0.25))
+
+    def test_less_than(self):
+        self.assertTrue(self.item < d.Candy("Candy", 1.6, 0.25))
+        self.assertFalse(self.item < d.Candy("Candy", 1.4, 0.25))
+
+    def test_less_than_or_equal(self):
+        self.assertTrue(self.item <= d.Candy("Candy", 1.5, 0.25))
+        self.assertTrue(self.item <= d.Candy("Candy", 1.6, 0.25))
+        self.assertFalse(self.item <= d.Candy("Candy", 1.4, 0.25))
+
+    def test_grater_than(self):
+        self.assertTrue(self.item > d.Candy("Candy", 1.4, 0.25))
+        self.assertFalse(self.item > d.Candy("Candy", 1.6, 0.25))
+
+    def test_greater_than_or_equal(self):
+        self.assertTrue(self.item >= d.Candy("Candy", 1.5, 0.25))
+        self.assertTrue(self.item >= d.Candy("Candy", 1.4, 0.25))
+        self.assertFalse(self.item >= d.Candy("Candy", 1.6, 0.25))
+
     def tearDown(self):
         return super().tearDown()
 
