@@ -1,6 +1,7 @@
 from typing import List
 from abc import ABC, abstractmethod
 from packaging import Packaging
+from payable import Payable, PayType
 
 
 class DessertItem(ABC):
@@ -243,6 +244,7 @@ class Order:
 
     def __init__(self):
         self._oder: List[DessertItem] = []
+        self._payment_type: PayType = PayType.CASH.value
 
     def add(self, new_item: DessertItem):
         self._oder.append(new_item)
@@ -257,6 +259,32 @@ class Order:
         total_tax = self.order_cost() * DessertItem._tax_percent
         return round(total_tax, 2)
 
+    def get_pay_type(self) -> PayType:
+        pay_type = self._payment_type
+        try:
+            if pay_type not in {
+                PayType.CARD.value,
+                PayType.CASH.value,
+                PayType.PHONE.value,
+            }:
+                raise ValueError("\nInvalid payment type")
+            return self._payment_type
+        except ValueError as e:
+            return (e, False)
+
+    def set_pay_type(self, payment_method: PayType) -> None:
+        try:
+            if payment_method not in {
+                PayType.CARD.value,
+                PayType.CASH.value,
+                PayType.PHONE.value,
+            }:
+                raise ValueError("\nInvalid payment type")
+            self._payment_type = payment_method
+            return True
+        except ValueError as e:
+            return (e, False)
+
     def __len__(self):
         return len(self._oder)
 
@@ -264,5 +292,5 @@ class Order:
         order = ""
         for item in self._oder:
             order += item.__str__() + "\n"
-        order += f"Total number of items in order: {len(self)}"
+        order += f"""Total number of items in order: {len(self)} \nOrder Subtotals {self.order_cost():.2f} {self.order_tax():.2f}\nOrder Total {self.order_cost() + self.order_tax():.2f}\nPaid with {self.get_pay_type()}"""
         return order

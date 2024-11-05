@@ -134,6 +134,39 @@ class DessertShop:
             topping_price,
         )
 
+    def payment_type(self, order):
+        payment: bool = False
+        prompt2 = "\n".join(
+            [
+                "\n",
+                "1: Cash",
+                "2: Card",
+                "3: Phone",
+                "\nHow would you like to pay? CASH, CARD, or PHONE: ",
+            ]
+        )
+        while not payment:
+            choice = input(prompt2)
+            match choice:
+                case "":
+                    payment = True
+                case "1":
+                    pay_type = order.set_pay_type("CASH")
+                    break
+                case "2":
+                    pay_type = order.set_pay_type("CARD")
+                    break
+                case "3":
+                    pay_type = order.set_pay_type("PHONE")
+                    break
+                case _:
+                    pay_type = order.set_pay_type(choice.upper())
+                    if pay_type == True:
+                        payment = True
+                    else:
+                        message, boolean = pay_type
+                        print(message)
+
 
 def main():
     # new_oder = d.Order()
@@ -194,6 +227,8 @@ def main():
                 print(
                     "Invalid response:  Please enter a choice from the menu (1-4) or Enter"
                 )
+
+    shop.payment_type(order)
     print(order)
 
     receipt_list = [["Name", "Quantity", "Unit Price", "Cost", "Tax"]]
@@ -205,7 +240,6 @@ def main():
         tax = item.calculate_tax()
         subtotal_cost += cost
         subtotal_tax += tax
-        print(item._packaging)
         parts = item.__str__().split("\n")
         list1_str = parts[0]
         list2_str = parts[1] if len(parts) > 1 else False
@@ -238,6 +272,7 @@ def main():
             )
         )
     )
+    receipt_list.append(list((f"Paid with {order.get_pay_type()}", "", "", "")))
 
     make_receipt(receipt_list)
     print()
