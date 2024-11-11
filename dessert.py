@@ -304,7 +304,7 @@ class Order:
 
     def add(self, new_item: "DessertItem"):
         for item in self:
-            if isinstance(new_item, Combinable):
+            if isinstance(item, Combinable):
                 if item.can_combine(new_item):
                     item.combine(new_item)
                     return

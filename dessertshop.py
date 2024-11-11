@@ -134,7 +134,7 @@ class DessertShop:
             topping_price,
         )
 
-    def payment_type(self, order):
+    def payment_type(self, order: "d.Order"):
         payment: bool = False
         prompt2 = "\n".join(
             [
