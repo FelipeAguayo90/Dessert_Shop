@@ -2,6 +2,7 @@ from typing import List
 from abc import ABC, abstractmethod
 from packaging import Packaging
 from payable import Payable, PayType
+from combine import Combinable
 
 
 class DessertItem(ABC):
@@ -48,22 +49,22 @@ class DessertItem(ABC):
         tax = self.calculate_cost() * DessertItem._tax_percent
         return round(tax, 2)
 
-    def __eq__(self, value: object) -> bool:
+    def __eq__(self, value: "DessertItem") -> bool:
         return self.calculate_cost() == value.calculate_cost()
 
-    def __ne__(self, value: object) -> bool:
+    def __ne__(self, value: "DessertItem") -> bool:
         return self.calculate_cost() != value.calculate_cost()
 
-    def __lt__(self, value: object) -> bool:
+    def __lt__(self, value: "DessertItem") -> bool:
         return self.calculate_cost() < value.calculate_cost()
 
-    def __gt__(self, value: object) -> bool:
+    def __gt__(self, value: "DessertItem") -> bool:
         return self.calculate_cost() > value.calculate_cost()
 
-    def __ge__(self, value: object) -> bool:
+    def __ge__(self, value: "DessertItem") -> bool:
         return self.calculate_cost() >= value.calculate_cost()
 
-    def __le__(self, value: object) -> bool:
+    def __le__(self, value: "DessertItem") -> bool:
         return self.calculate_cost() <= value.calculate_cost()
 
     @classmethod
@@ -107,6 +108,18 @@ class Candy(DessertItem):
         cost = self._candy_weight * self._price_per_pound
         return round(cost, 2)
 
+    def can_combine(self, other: "Candy") -> bool:
+        return (
+            isinstance(other, Candy)
+            and self._name == other._name
+            and self._price_per_pound == other._price_per_pound
+        )
+
+    def combine(self, other: "Candy") -> "Candy":
+        if isinstance(other, Candy):
+            self._candy_weight += other._candy_weight
+        return self
+
     candy_weight = property(get_candy_weight, set_candy_weight)
 
     price_per_pound = property(get_price_per_pound, set_price_per_pound)
@@ -149,6 +162,18 @@ class Cookie(DessertItem):
         cost_per_cookie = self._price_per_dozen / 12
         cost = self._cookie_quantity * round(cost_per_cookie, 3)
         return round(cost, 2)
+
+    def can_combine(self, other: "Cookie") -> bool:
+        return (
+            isinstance(other, Cookie)
+            and self._name == other._name
+            and self._price_per_dozen == other._price_per_dozen
+        )
+
+    def combine(self, other: "Cookie") -> "Cookie":
+        if isinstance(other, Cookie):
+            self._cookie_quantity += other._cookie_quantity
+        return self
 
     cookie_quantity = property(get_cookie_quantity, set_cookie_quantity)
 
@@ -263,8 +288,26 @@ class Order:
     def __init__(self):
         self._oder: List[DessertItem] = []
         self._payment_type: PayType = PayType.CASH.value
+        self._index = 0
 
-    def add(self, new_item: DessertItem):
+    def __iter__(self) -> iter:
+        self._index = 0
+        return self
+
+    def __next__(self):
+        if self._index < len(self._oder):
+            item = self._oder[self._index]
+            self._index += 1
+            return item
+        else:
+            raise StopIteration
+
+    def add(self, new_item: "DessertItem"):
+        for item in self:
+            if isinstance(new_item, Combinable):
+                if item.can_combine(new_item):
+                    item.combine(new_item)
+                    return
         self._oder.append(new_item)
 
     def order_cost(self):

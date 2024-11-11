@@ -5,6 +5,8 @@ import dessert as d
 class TestCandy(unittest.TestCase):
     def setUp(self):
         self.c = d.Candy("Gummy Bears", 0.25, 0.35)
+        self.other = d.Candy("Gummy Bears", 1.25, 0.35)
+        self.cookie = d.Cookie("Chocolate Chip", 6, 3.99)
 
     def test_init(self):
         self.assertEqual(self.c.name, "Gummy Bears")
@@ -31,6 +33,20 @@ class TestCandy(unittest.TestCase):
 
     def test_packaging(self):
         self.assertEqual(self.c._packaging, "Bag")
+
+    def test_can_combine_true(self):
+        self.assertTrue(self.c.can_combine(self.other))
+
+    def test_can_combine_dif_class(self):
+        self.assertFalse(self.c.can_combine(self.cookie))
+
+    def test_combine_correctly(self):
+        self.c.combine(self.other)
+        self.assertEqual(self.c.candy_weight, 1.50)
+
+    def test_combine_incorrectly(self):
+        self.c.combine(self.cookie)
+        self.assertEqual(self.c.candy_weight, 0.25)
 
     def tearDown(self):
         return super().tearDown()
