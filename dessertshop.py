@@ -1,5 +1,18 @@
 import dessert as d
 from receipt import make_receipt
+from typing import List
+import random
+
+
+class Customer:
+    def __init__(self, name: str) -> None:
+        self._customer_name: str = name
+        self._order_history: List[d.Order] = []
+        self._customer_id: int = random.randint(10000000, 99999999)
+
+    def add2history(self, order: "d.Order") -> "Customer":
+        self._order_history.append(order)
+        return self
 
 
 class DessertShop:
@@ -190,6 +203,7 @@ def main():
     """
     # boolean done = false
     done: bool = False
+    done2: bool = False
     # build the prompt string once
     prompt = "\n".join(
         [
@@ -201,81 +215,96 @@ def main():
             "\nWhat would you like to add to the order? (1-4, Enter for done): ",
         ]
     )
+    prompt2 = "\n".join(
+        [
+            "\n",
+            "\nWould you want to start another order? (Y/N): ",
+        ]
+    )
+    while not done2:
+        while not done:
+            choice = input(prompt)
+            match choice:
+                case "":
+                    done = True
+                case "1":
+                    item = shop.user_prompt_candy()
+                    order.add(item)
+                    print(f"{item.name} has been added to your order.")
+                case "2":
+                    item = shop.user_prompt_cookie()
+                    order.add(item)
+                    print(f"{item.name} has been added to your order.")
+                case "3":
+                    item = shop.user_prompt_icecream()
+                    order.add(item)
+                    print(f"{item.name} has been added to your order.")
+                case "4":
+                    item = shop.user_prompt_sundae()
+                    order.add(item)
+                    print(f"{item.name} has been added to your order.")
+                case _:
+                    print(
+                        "Invalid response:  Please enter a choice from the menu (1-4) or Enter"
+                    )
 
-    while not done:
-        choice = input(prompt)
+        shop.payment_type(order)
+        order.sort()
+        print(order)
+
+        receipt_list = [["Name", "Quantity", "Unit Price", "Cost", "Tax"]]
+        subtotal_cost = 0
+        subtotal_tax = 0
+
+        for item in order._oder:
+            cost = item.calculate_cost()
+            tax = item.calculate_tax()
+            subtotal_cost += cost
+            subtotal_tax += tax
+            parts = item.__str__().split("\n")
+            list1_str = parts[0]
+            list2_str = parts[1] if len(parts) > 1 else False
+            list1 = [text.strip() for text in list1_str.split(",")]
+            list2 = [text.strip() for text in list2_str.split(",")] if list2_str else []
+            receipt_list.append(list1)
+            if len(list2) > 0:
+                receipt_list.append(list2)
+
+        receipt_list.append(list(("Total items in the order", len(order))))
+        receipt_list.append(
+            list(
+                (
+                    "Order Subtotals",
+                    "",
+                    "",
+                    f"${order.order_cost():.2f}",
+                    f"${order.order_tax():.2f}",
+                )
+            )
+        )
+        receipt_list.append(
+            list(
+                (
+                    "Order Total",
+                    "",
+                    "",
+                    "",
+                    f"${(order.order_cost() + order.order_tax()):.2f}",
+                )
+            )
+        )
+        receipt_list.append(list((f"Paid with {order.get_pay_type()}", "", "", "")))
+
+        make_receipt(receipt_list)
+
+        choice = input(prompt2).upper()
         match choice:
             case "":
-                done = True
-            case "1":
-                item = shop.user_prompt_candy()
-                order.add(item)
-                print(f"{item.name} has been added to your order.")
-            case "2":
-                item = shop.user_prompt_cookie()
-                order.add(item)
-                print(f"{item.name} has been added to your order.")
-            case "3":
-                item = shop.user_prompt_icecream()
-                order.add(item)
-                print(f"{item.name} has been added to your order.")
-            case "4":
-                item = shop.user_prompt_sundae()
-                order.add(item)
-                print(f"{item.name} has been added to your order.")
+                done2 = True
+            case "Y":
+                done = False
             case _:
-                print(
-                    "Invalid response:  Please enter a choice from the menu (1-4) or Enter"
-                )
-
-    shop.payment_type(order)
-    order.sort()
-    print(order)
-
-    receipt_list = [["Name", "Quantity", "Unit Price", "Cost", "Tax"]]
-    subtotal_cost = 0
-    subtotal_tax = 0
-
-    for item in order._oder:
-        cost = item.calculate_cost()
-        tax = item.calculate_tax()
-        subtotal_cost += cost
-        subtotal_tax += tax
-        parts = item.__str__().split("\n")
-        list1_str = parts[0]
-        list2_str = parts[1] if len(parts) > 1 else False
-        list1 = [text.strip() for text in list1_str.split(",")]
-        list2 = [text.strip() for text in list2_str.split(",")] if list2_str else []
-        receipt_list.append(list1)
-        if len(list2) > 0:
-            receipt_list.append(list2)
-
-    receipt_list.append(list(("Total items in the order", len(order))))
-    receipt_list.append(
-        list(
-            (
-                "Order Subtotals",
-                "",
-                "",
-                f"${order.order_cost():.2f}",
-                f"${order.order_tax():.2f}",
-            )
-        )
-    )
-    receipt_list.append(
-        list(
-            (
-                "Order Total",
-                "",
-                "",
-                "",
-                f"${(order.order_cost() + order.order_tax()):.2f}",
-            )
-        )
-    )
-    receipt_list.append(list((f"Paid with {order.get_pay_type()}", "", "", "")))
-
-    make_receipt(receipt_list)
+                done2 = True
     print()
 
 
