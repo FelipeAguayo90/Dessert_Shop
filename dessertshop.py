@@ -1,14 +1,17 @@
 import dessert as d
 from receipt import make_receipt
-from typing import List
+from typing import List, Dict
 import random
 
 
 class Customer:
+    id: int = 0
+
     def __init__(self, name: str) -> None:
         self._customer_name: str = name
         self._order_history: List[d.Order] = []
-        self._customer_id: int = random.randint(10000000, 99999999)
+        self._customer_id: int = 1000 + self.__class__.id
+        self.__class__.id += 1
 
     def add2history(self, order: "d.Order") -> "Customer":
         self._order_history.append(order)
@@ -16,6 +19,10 @@ class Customer:
 
 
 class DessertShop:
+
+    def __init__(self):
+        self._customer_db: Dict[str, Customer] = {}
+
     def user_prompt_candy(self) -> d.Candy:
         candy_name: str = ""
         candy_name: float = 0.0
@@ -192,7 +199,6 @@ def main():
     # print(new_oder)
 
     shop = DessertShop()
-    order = d.Order()
     """
     order.add(Candy('Candy Corn', 1.5, 0.25))
     order.add(Candy('Gummy Bears', 0.25, 0.35))
@@ -212,6 +218,7 @@ def main():
             "2: Cookie",
             "3: Ice Cream",
             "4: Sunday",
+            "5: Admin Module",
             "\nWhat would you like to add to the order? (1-4, Enter for done): ",
         ]
     )
@@ -221,12 +228,27 @@ def main():
             "\nWould you want to start another order? (Y/N): ",
         ]
     )
+    prompt3 = "\n".join(["\n", "\nWhat is the customer name?: "])
     while not done2:
+        order = d.Order()
+        customer_name: str = ""
         while not done:
             choice = input(prompt)
             match choice:
                 case "":
-                    done = True
+                    while True:
+                        customer_name += input(prompt3).upper()
+                        if len(customer_name) > 0:
+                            if customer_name not in shop._customer_db.keys():
+                                customer = Customer(customer_name)
+                                customer.add2history(order)
+                                shop._customer_db[customer_name] = customer
+                            else:
+                                shop._customer_db[customer_name].add2history(order)
+                            done = True
+                            break
+                        else:
+                            print("\nPlease enter a valid name.")
                 case "1":
                     item = shop.user_prompt_candy()
                     order.add(item)
@@ -243,6 +265,10 @@ def main():
                     item = shop.user_prompt_sundae()
                     order.add(item)
                     print(f"{item.name} has been added to your order.")
+                # case "5":
+                #     item = shop.user_prompt_sundae()
+                #     order.add(item)
+                #     print(f"{item.name} has been added to your order.")
                 case _:
                     print(
                         "Invalid response:  Please enter a choice from the menu (1-4) or Enter"
@@ -251,7 +277,9 @@ def main():
         shop.payment_type(order)
         order.sort()
         print(order)
-
+        print(
+            f"Customer Name: {shop._customer_db[customer_name]._customer_name.capitalize():<10}Customer ID: {shop._customer_db[customer_name]._customer_id :<10}Total Orders: {len(shop._customer_db[customer_name]._order_history)}"
+        )
         receipt_list = [["Name", "Quantity", "Unit Price", "Cost", "Tax"]]
         subtotal_cost = 0
         subtotal_tax = 0
@@ -282,6 +310,7 @@ def main():
                 )
             )
         )
+
         receipt_list.append(
             list(
                 (
@@ -294,6 +323,15 @@ def main():
             )
         )
         receipt_list.append(list((f"Paid with {order.get_pay_type()}", "", "", "")))
+        receipt_list.append(
+            list(
+                (
+                    f"Customer Name: {shop._customer_db[customer_name]._customer_name.capitalize():<10}",
+                    f"Customer ID: {shop._customer_db[customer_name]._customer_id :<10}",
+                    f"Total Orders: {len(shop._customer_db[customer_name]._order_history)}",
+                )
+            )
+        )
 
         make_receipt(receipt_list)
 
