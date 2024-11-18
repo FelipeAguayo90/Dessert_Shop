@@ -1,7 +1,6 @@
 import dessert as d
 from receipt import make_receipt
 from typing import List, Dict
-import random
 
 
 class Customer:
@@ -199,15 +198,9 @@ def main():
     # print(new_oder)
 
     shop = DessertShop()
-    """
-    order.add(Candy('Candy Corn', 1.5, 0.25))
-    order.add(Candy('Gummy Bears', 0.25, 0.35))
-    order.add(Cookie('Chocolate Chip', 6, 3.99))
-    order.add(IceCream('Pistachio', 2, 0.79))
-    order.add(Sundae('Vanilla', 3, 0.69, 'Hot Fudge', 1.29))
-    order.add(Cookie('Oatmeal Raisin', 2, 3.45))
-    """
+
     # boolean done = false
+    back_from_admin: bool = False
     done: bool = False
     done2: bool = False
     # build the prompt string once
@@ -229,6 +222,17 @@ def main():
         ]
     )
     prompt3 = "\n".join(["\n", "\nWhat is the customer name?: "])
+    prompt4 = "\n".join(
+        [
+            "\n",
+            "1: Shop Customer List",
+            "2: Customer Order History",
+            "3: Best Customer3",
+            "4: Exit Admin Module",
+            "\nWhat would you like to see? (1-4): ",
+        ]
+    )
+
     while not done2:
         order = d.Order()
         customer_name: str = ""
@@ -236,114 +240,163 @@ def main():
             choice = input(prompt)
             match choice:
                 case "":
-                    while True:
-                        customer_name += input(prompt3).upper()
-                        if len(customer_name) > 0:
-                            if customer_name not in shop._customer_db.keys():
-                                customer = Customer(customer_name)
-                                customer.add2history(order)
-                                shop._customer_db[customer_name] = customer
+                    if not back_from_admin:
+                        while True:
+                            customer_name += input(prompt3).upper()
+                            if len(customer_name) > 0:
+                                if customer_name not in shop._customer_db.keys():
+                                    customer = Customer(customer_name)
+                                    customer.add2history(order)
+                                    shop._customer_db[customer_name] = customer
+                                else:
+                                    shop._customer_db[customer_name].add2history(order)
+                                done = True
+                                break
                             else:
-                                shop._customer_db[customer_name].add2history(order)
-                            done = True
-                            break
-                        else:
-                            print("\nPlease enter a valid name.")
+                                print("\nPlease enter a valid name.")
+                    else:
+                        done = True
                 case "1":
                     item = shop.user_prompt_candy()
                     order.add(item)
                     print(f"{item.name} has been added to your order.")
+                    back_from_admin: bool = False
                 case "2":
                     item = shop.user_prompt_cookie()
                     order.add(item)
                     print(f"{item.name} has been added to your order.")
+                    back_from_admin: bool = False
                 case "3":
                     item = shop.user_prompt_icecream()
                     order.add(item)
                     print(f"{item.name} has been added to your order.")
+                    back_from_admin: bool = False
                 case "4":
                     item = shop.user_prompt_sundae()
                     order.add(item)
                     print(f"{item.name} has been added to your order.")
-                # case "5":
-                #     item = shop.user_prompt_sundae()
-                #     order.add(item)
-                #     print(f"{item.name} has been added to your order.")
+                    back_from_admin: bool = False
+                case "5":
+                    while True:
+                        choice = input(prompt4)
+                        match choice:
+                            case "1":
+                                for customer in shop._customer_db.values():
+                                    print(
+                                        f"\nCustomer Name: {customer._customer_name.capitalize()}\tCustomer ID: {customer._customer_id}"
+                                    )
+                            case "2":
+                                customer = input(
+                                    "\nEnter the name of the customer:\n"
+                                ).upper()
+                                if customer in shop._customer_db:
+                                    order_num = 1
+                                    print(
+                                        f"\nCustomer Name: {shop._customer_db[customer]._customer_name.capitalize()}\tCustomer ID: {shop._customer_db[customer]._customer_id} "
+                                    )
+                                    for order in shop._customer_db[
+                                        customer
+                                    ]._order_history:
+                                        print(f"\nOrder #: {order_num}\n")
+                                        print(order)
+                                        order_num += 1
+                                else:
+                                    print("\nCustomer does not exist.")
+                            case "3":
+                                best_customer = max(
+                                    shop._customer_db.items(),
+                                    key=lambda customer: len(
+                                        customer[1]._order_history
+                                    ),
+                                )
+                                print(
+                                    f"\nThe Dessert Shop's most valued customer is: {best_customer[0].capitalize()}!"
+                                )
+                            case "4":
+                                back_from_admin = True
+                                done2 = True
+                                break
+                            case _:
+                                print(
+                                    "\nInvalid response:  Please enter a choice from the menu (1-4) or Enter"
+                                )
                 case _:
                     print(
                         "Invalid response:  Please enter a choice from the menu (1-4) or Enter"
                     )
+        if not back_from_admin:
+            shop.payment_type(order)
+            order.sort()
+            print(order)
+            print(
+                f"Customer Name: {shop._customer_db[customer_name]._customer_name.capitalize():<10}Customer ID: {shop._customer_db[customer_name]._customer_id :<10}Total Orders: {len(shop._customer_db[customer_name]._order_history)}"
+            )
+            receipt_list = [["Name", "Quantity", "Unit Price", "Cost", "Tax"]]
+            subtotal_cost = 0
+            subtotal_tax = 0
 
-        shop.payment_type(order)
-        order.sort()
-        print(order)
-        print(
-            f"Customer Name: {shop._customer_db[customer_name]._customer_name.capitalize():<10}Customer ID: {shop._customer_db[customer_name]._customer_id :<10}Total Orders: {len(shop._customer_db[customer_name]._order_history)}"
-        )
-        receipt_list = [["Name", "Quantity", "Unit Price", "Cost", "Tax"]]
-        subtotal_cost = 0
-        subtotal_tax = 0
+            for item in order._oder:
+                cost = item.calculate_cost()
+                tax = item.calculate_tax()
+                subtotal_cost += cost
+                subtotal_tax += tax
+                parts = item.__str__().split("\n")
+                list1_str = parts[0]
+                list2_str = parts[1] if len(parts) > 1 else False
+                list1 = [text.strip() for text in list1_str.split(",")]
+                list2 = (
+                    [text.strip() for text in list2_str.split(",")] if list2_str else []
+                )
+                receipt_list.append(list1)
+                if len(list2) > 0:
+                    receipt_list.append(list2)
 
-        for item in order._oder:
-            cost = item.calculate_cost()
-            tax = item.calculate_tax()
-            subtotal_cost += cost
-            subtotal_tax += tax
-            parts = item.__str__().split("\n")
-            list1_str = parts[0]
-            list2_str = parts[1] if len(parts) > 1 else False
-            list1 = [text.strip() for text in list1_str.split(",")]
-            list2 = [text.strip() for text in list2_str.split(",")] if list2_str else []
-            receipt_list.append(list1)
-            if len(list2) > 0:
-                receipt_list.append(list2)
-
-        receipt_list.append(list(("Total items in the order", len(order))))
-        receipt_list.append(
-            list(
-                (
-                    "Order Subtotals",
-                    "",
-                    "",
-                    f"${order.order_cost():.2f}",
-                    f"${order.order_tax():.2f}",
+            receipt_list.append(list(("Total items in the order", len(order))))
+            receipt_list.append(
+                list(
+                    (
+                        "Order Subtotals",
+                        "",
+                        "",
+                        f"${order.order_cost():.2f}",
+                        f"${order.order_tax():.2f}",
+                    )
                 )
             )
-        )
 
-        receipt_list.append(
-            list(
-                (
-                    "Order Total",
-                    "",
-                    "",
-                    "",
-                    f"${(order.order_cost() + order.order_tax()):.2f}",
+            receipt_list.append(
+                list(
+                    (
+                        "Order Total",
+                        "",
+                        "",
+                        "",
+                        f"${(order.order_cost() + order.order_tax()):.2f}",
+                    )
                 )
             )
-        )
-        receipt_list.append(list((f"Paid with {order.get_pay_type()}", "", "", "")))
-        receipt_list.append(
-            list(
-                (
-                    f"Customer Name: {shop._customer_db[customer_name]._customer_name.capitalize():<10}",
-                    f"Customer ID: {shop._customer_db[customer_name]._customer_id :<10}",
-                    f"Total Orders: {len(shop._customer_db[customer_name]._order_history)}",
+            receipt_list.append(list((f"Paid with {order.get_pay_type()}", "", "", "")))
+            receipt_list.append(
+                list(
+                    (
+                        f"Customer Name: {shop._customer_db[customer_name]._customer_name.capitalize():<10}",
+                        f"Customer ID: {shop._customer_db[customer_name]._customer_id :<10}",
+                        f"Total Orders: {len(shop._customer_db[customer_name]._order_history)}",
+                    )
                 )
             )
-        )
 
-        make_receipt(receipt_list)
+            make_receipt(receipt_list)
 
-        choice = input(prompt2).upper()
-        match choice:
-            case "":
-                done2 = True
-            case "Y":
-                done = False
-            case _:
-                done2 = True
-    print()
+            choice = input(prompt2).upper()
+            match choice:
+                case "":
+                    done2 = True
+                case "Y":
+                    done = False
+                case _:
+                    done2 = True
+        print()
 
 
 if __name__ == "__main__":
